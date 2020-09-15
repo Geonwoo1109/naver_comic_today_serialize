@@ -6,6 +6,7 @@ importClass(java.util.Base64);
 importClass(org.jsoup.Jsoup);
 const _String = java.lang.String;
 
+
 function toBase64(buffer) {
     return Base64.getEncoder().encodeToString(buffer);
 }
@@ -23,7 +24,7 @@ function getUrl(mac, url, timestamp) {
     sb.setLength(0);
     sb.append(substring);
     sb.append(timestamp);
-    let encode = toBase64(mac.doFinal(new _String(sb.toString()).getBytes()));
+    let encode = encodeURIComponent(toBase64(mac.doFinal(new _String(sb.toString()).getBytes())));
     sb = new StringBuilder();
     sb.setLength(0);
     sb.append(url);
@@ -46,7 +47,8 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     if (msg == "/네웹") {
         let time = new Date().getTime() + "";
         let today = day[new Date().getDay()];
-        let json = JSON.parse(Jsoup.connect(getUrl(getInstance(key), url, time)).ignoreContentType(true).get().text());
+        let APIurl = getUrl(getInstance(key), url, time);
+        let json = JSON.parse(Jsoup.connect(APIurl).ignoreContentType(true).get().text());
         let a = '결과' + '\u200b'.repeat(500) + '\n';
         json.message.result.webtoonTitleList.forEach(function(obj) {
             if (!obj.weekDayList.includes(today)) return;
